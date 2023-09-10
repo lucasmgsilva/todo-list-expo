@@ -2,8 +2,9 @@ import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-
 import { styles } from "./styles";
 import { Check, Circle, Clipboard, ClipboardText, PlusCircle, Trash } from "phosphor-react-native";
 import { useState } from "react";
+import { TaskItem } from "../../components/TaskItem";
 
-interface Task {
+export interface Task {
     id: number;
     description: string;
     isCompleted: boolean;
@@ -37,9 +38,9 @@ export function Home() {
         setNewTask('');
     }
 
-    function handleChangeTaskStatus(id: number) {
+    function handleChangeTaskStatus(taskId: number) {
         setTasks(prevTasks => {
-            const updatedTasks = prevTasks.map(task => task.id === id ? {
+            const updatedTasks = prevTasks.map(task => task.id === taskId ? {
                 ...task,
                 isCompleted: !task.isCompleted
             } : task)
@@ -48,9 +49,9 @@ export function Home() {
         });
     }
 
-    function handleRemoveTask(id: number) {
+    function handleRemoveTask(taskId: number) {
         setTasks(prevTasks => {
-            const filteredTasks = prevTasks.filter(task => task.id !== id)
+            const filteredTasks = prevTasks.filter(task => task.id !== taskId)
             return filteredTasks;
         });
     }
@@ -103,27 +104,11 @@ export function Home() {
                         data={tasks}
                         keyExtractor={task => String(task.id)}
                         renderItem={({ item: task }) => (
-                            <View style={styles.taskListItem}>
-                                <TouchableOpacity
-                                    onPress={() => handleChangeTaskStatus(task.id)}
-                                >
-                                    {!task.isCompleted ? (
-                                        <View style={styles.isNotCompletedButton} />
-                                        ) : (
-                                        <View style={styles.isCompletedButton}>
-                                            <Check color="#F2F2F2" size={14}/>
-                                        </View>
-                                    )}
-                                </TouchableOpacity>
-
-                                <Text style={styles.taskListItemText}>{task.description}</Text>
-
-                                <TouchableOpacity
-                                    onPress={() => handleRemoveTask(task.id)}
-                                >
-                                    <Trash size={20} color="#808080" />
-                                </TouchableOpacity>
-                            </View>
+                            <TaskItem 
+                                task={task} 
+                                onChangeTaskStatus={handleChangeTaskStatus}
+                                onRemoveTask={handleRemoveTask}
+                            />
                         )}
                         />
                     ) : (
